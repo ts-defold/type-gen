@@ -18,7 +18,9 @@
   "bin": "dist/build.js",
   "scripts": {
     "build": "tsc && npm run build-types",
-    "build-types": "node dist/build.js"
+    "build-types": "node dist/build.js",
+    "stage": "tsc -m commonjs -lib es2019 -target es2019 -esModuleInterop -sourceMap --moduleResolution node build/index.ts && npm run stage-bin",
+    "stage-bin": "node build/index.js"
   },
   "dependencies": {
     "got": "^11.7.0",

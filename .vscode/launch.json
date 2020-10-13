@@ -5,12 +5,20 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch via npm",
+            "name": "stage",
+            "type": "node",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": ["run-script", "stage"]
+         },
+        {
+            "name": "build",
             "type": "node",
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "runtimeExecutable": "npm",
             "runtimeArgs": ["run-script", "build"]
-          }
+         }
     ]
 }
