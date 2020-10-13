@@ -336,17 +336,23 @@ function generate(input, info, types) {
                     break;
                 case schema$1.EDocElemType.Function:
                     {
-                        const set = new Map();
-                        const params = e.parameters.map(p => ensureUnique(set, p)).map(p => `${p.name}${p.optional ? "?" : ""}: ${type(Object.values(schema$1.EDocParamType)[Object.keys(schema$1.EDocParamType).indexOf(p.type)])}`).join(', ');
-                        const retValue = e.returnvalues.length > 0 ? e.returnvalues[0].type : Object.keys(schema$1.EDocParamType)[Object.values(schema$1.EDocParamType).indexOf(schema$1.EDocParamType.Void)];
-                        const retOptional = e.returnvalues.length > 0 ? e.returnvalues[0].optional : false;
-                        output += docs(e, TAB);
+                        const scriptFunctions = ["final", "init", "on_input", "on_message", "on_reload", "update"];
                         const reserved = isReserved(name);
                         const funcName = reserved ? reserved.alt : name;
                         const funcExp = reserved ? "" : exp;
-                        output += TAB + `${funcExp} function ${funcName}(${params}): ${type(Object.values(schema$1.EDocParamType)[Object.keys(schema$1.EDocParamType).indexOf(retValue)])}${retOptional ? " | undefined" : ""}` + '\n';
-                        if (reserved)
-                            output += '\t' + `export { ${reserved.alt} as ${reserved.name} }` + '\n';
+                        if (i.info.group == schema$1.EDocGroup.Script && scriptFunctions.includes(funcName)) {
+                            output.slice(0, -1); // skip reserved functions
+                        }
+                        else {
+                            const set = new Map();
+                            const params = e.parameters.map(p => ensureUnique(set, p)).map(p => `${p.name}${p.optional ? "?" : ""}: ${type(Object.values(schema$1.EDocParamType)[Object.keys(schema$1.EDocParamType).indexOf(p.type)])}`).join(', ');
+                            const retValue = e.returnvalues.length > 0 ? e.returnvalues[0].type : Object.keys(schema$1.EDocParamType)[Object.values(schema$1.EDocParamType).indexOf(schema$1.EDocParamType.Void)];
+                            const retOptional = e.returnvalues.length > 0 ? e.returnvalues[0].optional : false;
+                            output += docs(e, TAB);
+                            output += TAB + `${funcExp} function ${funcName}(${params}): ${type(Object.values(schema$1.EDocParamType)[Object.keys(schema$1.EDocParamType).indexOf(retValue)])}${retOptional ? " | undefined" : ""}` + '\n';
+                            if (reserved)
+                                output += '\t' + `export { ${reserved.alt} as ${reserved.name} }` + '\n';
+                        }
                     }
                     break;
             }
