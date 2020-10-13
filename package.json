@@ -1,8 +1,8 @@
 {
-  "name": "type-gen",
+  "name": "@ts-defold/type-gen",
   "version": "0.1.0",
   "description": "Typescript type generator for Defold",
-  "repository": "github:ts-defold/defold-types",
+  "repository": "github:ts-defold/type-gen",
   "bugs": {
     "url": "https://github.com/ts-defold/type-gen/issues"
   },
@@ -14,8 +14,12 @@
   "author": "Justin Walsh (@thejustinwalsh)",
   "homepage": "https://github.com/ts-defold/type-gen#readme",
   "license": "MIT",
-  "main": "dist/index.js",
-  "bin": "dist/build.js",
+  "main": "dist/build.js",
+  "bin": "bin/build.js",
+  "files": [
+    "dist/*.js",
+    "bin/*.js"
+  ],
   "scripts": {
     "build": "tsc && npm run build-types",
     "build-types": "node dist/build.js",

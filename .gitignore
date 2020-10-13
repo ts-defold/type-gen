@@ -105,3 +105,4 @@ dist
 
 # default location for generated types
 index.d.ts
+build/*.js*
