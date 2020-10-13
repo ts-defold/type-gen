@@ -52,6 +52,18 @@ function parseName(input: string): { name: string, optional: boolean } {
     return { name, optional };
 }
 
+function inNamespace(doc: schema.IDocJson): boolean {
+    let hasFunction = false;
+    const funcNamespace = undefined != doc.elements.find(e =>  {
+        if (e.type == schema.EDocElemType.Function) {
+            hasFunction = true;
+            return e.name.startsWith(doc.info.namespace);
+        }
+    });
+
+    return !hasFunction || funcNamespace;
+}
+
 export function parse(input: Array<schema.IDocJson>, groups: Array<schema.EDocGroup> = [schema.EDocGroup.System, schema.EDocGroup.Script, schema.EDocGroup.Components, schema.EDocGroup.Extensions]): Array<schema.IDocJson> {
     
     const docs = input
@@ -89,7 +101,7 @@ export function parse(input: Array<schema.IDocJson>, groups: Array<schema.EDocGr
 
         const info: schema.IDocInfo = {
             group: doc.info.group,
-            namespace: elements.find(e => e.name.startsWith(doc.info.namespace)) ? doc.info.namespace : "",
+            namespace: inNamespace(doc) ? doc.info.namespace : "",
             description: parseHtml(doc.info.description)
         };
 

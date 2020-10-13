@@ -140,6 +140,16 @@ function parseName(input) {
     const name = rawName.replace(/^[^a-zA-Z_$]|[^0-9a-zA-Z_$]/g, "_");
     return { name, optional };
 }
+function inNamespace(doc) {
+    let hasFunction = false;
+    const funcNamespace = undefined != doc.elements.find(e => {
+        if (e.type == schema$1.EDocElemType.Function) {
+            hasFunction = true;
+            return e.name.startsWith(doc.info.namespace);
+        }
+    });
+    return !hasFunction || funcNamespace;
+}
 function parse(input, groups = [schema$1.EDocGroup.System, schema$1.EDocGroup.Script, schema$1.EDocGroup.Components, schema$1.EDocGroup.Extensions]) {
     const docs = input
         .filter(doc => groups.includes(doc.info.group))
@@ -173,7 +183,7 @@ function parse(input, groups = [schema$1.EDocGroup.System, schema$1.EDocGroup.Sc
         });
         const info = {
             group: doc.info.group,
-            namespace: elements.find(e => e.name.startsWith(doc.info.namespace)) ? doc.info.namespace : "",
+            namespace: inNamespace(doc) ? doc.info.namespace : "",
             description: parseHtml(doc.info.description)
         };
         return { info, elements };
@@ -214,26 +224,26 @@ function comment(input) {
     out += '\t' + `*/` + '\n';
     return out;
 }
-function docs(input) {
+function docs(input, TAB = '\t') {
     const desc = input.description || input.brief;
-    let out = '\t' + `/**` + '\n';
+    let out = TAB + `/**` + '\n';
     desc.split('\n').forEach(line => {
-        out += '\t' + `* ${line}` + '\n';
+        out += TAB + `* ${line}` + '\n';
     });
     input.parameters.forEach(p => {
-        out += '\t' + `* @param ${p.name}  ${p.doc}` + '\n';
+        out += TAB + `* @param ${p.name}  ${p.doc}` + '\n';
     });
     input.returnvalues.forEach(p => {
-        out += '\t' + `* @return ${p.name}  ${p.doc}` + '\n';
+        out += TAB + `* @return ${p.name}  ${p.doc}` + '\n';
     });
-    out += '\t' + `*/` + '\n';
+    out += TAB + `*/` + '\n';
     return out;
 }
 function type(type) {
     if (type == schema$1.EDocParamType.Unknown)
         return schema$1.EDocParamType.Any;
     if (type == schema$1.EDocParamType.Table)
-        return schema$1.EDocParamType.Object;
+        return schema$1.EDocParamType.Any;
     if (type === undefined || type == "constant")
         return schema$1.EDocParamType.Any; // Not certain what translates into undefined yet
     return type;
@@ -268,10 +278,11 @@ function generate(input, info, types) {
             if (t.namespace)
                 output += '\n' + `declare namespace ${t.namespace} {` + '\n';
             const tab = t.namespace ? '\t' : '';
+            const exp = t.namespace ? "export" : "declare";
             t.types.forEach(d => {
                 const unionOrIntersect = d.unions.length ? `${d.unions.join(' | ')} ` : d.intersection ? `${d.intersection} & ` : "";
                 output += '\n';
-                output += tab + `type ${d.name} = ${unionOrIntersect}{` + '\n';
+                output += tab + `${exp} type ${d.name} = ${unionOrIntersect}{` + '\n';
                 for (const k in d.definition) {
                     output += tab + '\t' + `${k}: ${type(d.definition[k])},` + '\n';
                 }
@@ -282,53 +293,68 @@ function generate(input, info, types) {
         });
     }
     output += hr();
+    // Globals to the front
+    const globals = input.filter(i => i.info.namespace === "");
+    globals.forEach(g => input.splice(input.indexOf(g), 1));
+    const sorted = globals.concat(input);
+    // strip empty modules
+    const printable = [schema$1.EDocElemType.Variable, schema$1.EDocElemType.Message, schema$1.EDocElemType.Function];
+    const modules = sorted.filter(m => {
+        const el = m.elements.find(e => printable.includes(e.type));
+        if (el)
+            return m;
+    });
     // Modules
-    input.forEach(i => {
-        if (i.info.namespace) {
-            output += '\n' + `declare namespace ${i.info.namespace} {` + '\n';
-            const elements = i.elements.sort((a, b) => Object.keys(schema$1.EDocElemType).indexOf(a.type) - Object.keys(schema$1.EDocElemType).indexOf(b.type));
-            elements.forEach(e => {
-                const name = e.name.replace(`${i.info.namespace}.`, "");
-                output += '\n';
-                switch (e.type) {
-                    case schema$1.EDocElemType.Variable:
-                        {
-                            output += comment(e.brief);
-                            output += '\t' + `let ${name}: ${schema$1.EDocParamType.Any}` + '\n';
-                        }
-                        break;
-                    case schema$1.EDocElemType.Message:
-                        {
-                            output += comment(e.description);
-                            output += '\t' + `//let ${name}: ${schema$1.EDocParamType.String}` + '\n';
-                        }
-                        break;
-                    case schema$1.EDocElemType.Property:
-                        {
-                            output += comment(e.description);
-                            output += '\t' + `let ${name}: ${schema$1.EDocParamType.Any}` + '\n';
-                        }
-                        break;
-                    case schema$1.EDocElemType.Function:
-                        {
-                            const set = new Map();
-                            const params = e.parameters.map(p => ensureUnique(set, p)).map(p => `${p.name}${p.optional ? "?" : ""}: ${type(Object.values(schema$1.EDocParamType)[Object.keys(schema$1.EDocParamType).indexOf(p.type)])}`).join(', ');
-                            const retValue = e.returnvalues.length > 0 ? e.returnvalues[0].type : Object.keys(schema$1.EDocParamType)[Object.values(schema$1.EDocParamType).indexOf(schema$1.EDocParamType.Void)];
-                            const retOptional = e.returnvalues.length > 0 ? e.returnvalues[0].optional : false;
-                            output += docs(e);
-                            const reserved = isReserved(name);
-                            const funcName = reserved ? reserved.alt : name;
-                            output += '\t' + `function ${funcName}(${params}): ${type(Object.values(schema$1.EDocParamType)[Object.keys(schema$1.EDocParamType).indexOf(retValue)])}${retOptional ? " | undefined" : ""}` + '\n';
-                            if (reserved)
-                                output += '\t' + `export { ${reserved.alt} as ${reserved.name} }` + '\n';
-                        }
-                        break;
-                }
-            });
+    modules.forEach(i => {
+        const TAB = i.info.namespace ? '\t' : '';
+        const exp = i.info.namespace ? "export" : "declare";
+        output += '\n';
+        if (i.info.namespace)
+            output += `declare namespace ${i.info.namespace} {` + '\n';
+        const elements = i.elements.sort((a, b) => Object.keys(schema$1.EDocElemType).indexOf(a.type) - Object.keys(schema$1.EDocElemType).indexOf(b.type));
+        elements.forEach(e => {
+            const name = e.name.replace(`${i.info.namespace}.`, "");
             output += '\n';
+            switch (e.type) {
+                case schema$1.EDocElemType.Variable:
+                    {
+                        output += comment(e.brief);
+                        output += TAB + `${exp} let ${name}: ${schema$1.EDocParamType.Any}` + '\n';
+                    }
+                    break;
+                case schema$1.EDocElemType.Message:
+                    {
+                        output += comment(e.description);
+                        output += TAB + `${exp} type ${name} = "${name}"` + '\n';
+                    }
+                    break;
+                case schema$1.EDocElemType.Property:
+                    {
+                        output += comment(e.description);
+                        output += TAB + `${exp} let ${name}: ${schema$1.EDocParamType.Any}` + '\n';
+                    }
+                    break;
+                case schema$1.EDocElemType.Function:
+                    {
+                        const set = new Map();
+                        const params = e.parameters.map(p => ensureUnique(set, p)).map(p => `${p.name}${p.optional ? "?" : ""}: ${type(Object.values(schema$1.EDocParamType)[Object.keys(schema$1.EDocParamType).indexOf(p.type)])}`).join(', ');
+                        const retValue = e.returnvalues.length > 0 ? e.returnvalues[0].type : Object.keys(schema$1.EDocParamType)[Object.values(schema$1.EDocParamType).indexOf(schema$1.EDocParamType.Void)];
+                        const retOptional = e.returnvalues.length > 0 ? e.returnvalues[0].optional : false;
+                        output += docs(e, TAB);
+                        const reserved = isReserved(name);
+                        const funcName = reserved ? reserved.alt : name;
+                        const funcExp = reserved ? "" : exp;
+                        output += TAB + `${funcExp} function ${funcName}(${params}): ${type(Object.values(schema$1.EDocParamType)[Object.keys(schema$1.EDocParamType).indexOf(retValue)])}${retOptional ? " | undefined" : ""}` + '\n';
+                        if (reserved)
+                            output += '\t' + `export { ${reserved.alt} as ${reserved.name} }` + '\n';
+                    }
+                    break;
+            }
+        });
+        output += '\n';
+        if (i.info.namespace)
             output += `}` + '\n';
-            output += hr();
-        }
+        output += hr();
     });
     return output;
 }

@@ -1,6 +1,6 @@
 {
   "name": "@ts-defold/type-gen",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Typescript type generator for Defold",
   "repository": "github:ts-defold/type-gen",
   "bugs": {
@@ -22,6 +22,7 @@
   ],
   "scripts": {
     "build": "npm run compile && npm run generate-types && npm run bundle",
+    "debug": "npm run compile && npm run generate-types",
     "compile": "tsc",
     "generate-types": "node dist/index.js",
     "bundle": "rollup --config"

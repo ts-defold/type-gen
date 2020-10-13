@@ -56,6 +56,7 @@ export interface IDocInfo {
     group: EDocGroup,
     namespace: string,
     description: string,
+    name?: string,
 }
 
 export interface IDocElement {

@@ -5,13 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "stage",
+            "name": "debug",
             "type": "node",
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "runtimeExecutable": "npm",
-            "runtimeArgs": ["run-script", "stage"]
-         },
+            "runtimeArgs": ["run-script", "debug"]
+        },
         {
             "name": "build",
             "type": "node",
@@ -19,6 +19,6 @@
             "cwd": "${workspaceFolder}",
             "runtimeExecutable": "npm",
             "runtimeArgs": ["run-script", "build"]
-         }
+        }
     ]
 }
