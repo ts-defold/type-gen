@@ -22,7 +22,7 @@
   ],
   "scripts": {
     "build": "tsc && npm run build-types",
-    "build-types": "node dist/build.js",
+    "build-types": "node dist/index.js",
     "bundle": "tsc && npm run bundle-bin",
     "bundle-bin": "rollup --config"
   },

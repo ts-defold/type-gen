@@ -1,4 +1,5 @@
 export enum EDocGroup {
+    System = "SYSTEM",
     Script = "SCRIPT",
     Components = "COMPONENTS",
     Extensions = "EXTENSIONS",

@@ -65,7 +65,7 @@ void (async () => {
     await dr.cleanup();
 
     // Parse and Generate
-    const parsedDocs = parse(docs, [EDocGroup.Script, EDocGroup.Components, EDocGroup.Extensions]);
+    const parsedDocs = parse(docs, [EDocGroup.System, EDocGroup.Script, EDocGroup.Components, EDocGroup.Extensions]);
     const output = generate(parsedDocs, { channel, tag, sha1 }, builtInTypes);
 
     await fs.promises.writeFile(path.join(process.cwd(), out), output);

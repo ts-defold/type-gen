@@ -41,6 +41,24 @@ function type(type: schema.EDocParamType) {
     return type;
 }
 
+
+function isReserved(name: string): { alt: string, name: string } | null {
+    const reserved = ["delete"];
+    return reserved.includes(name) ? {alt: name +'$', name} : null;
+}
+
+function ensureUnique(set:Map<string, number>, e: schema.IDocParam): schema.IDocParam {
+    if (!set.has(e.name)) {
+        set.set(e.name, 0);
+        return e;
+    }
+
+    const count = set.get(e.name);
+    set.set(e.name,  (count ? count : 0) + 1);
+
+    return Object.assign({}, e, {name: `${e.name}${set.get(e.name)}`});
+}
+
 function hr(): string {
     return `// =^..^=   =^..^=   =^..^=    =^..^=    =^..^=    =^..^=    =^..^= //` + '\n\n';
 }
@@ -106,11 +124,15 @@ export function generate(input: Array<schema.IDocJson>, info: GeneratorInfo, typ
                     } break;
 
                     case schema.EDocElemType.Function: {
-                        const params = e.parameters.map(p => `${p.name}${p.optional ? "?" : ""}: ${type(Object.values(schema.EDocParamType)[Object.keys(schema.EDocParamType).indexOf(p.type)])}`).join(', ');
+                        const set = new Map<string, number>();
+                        const params = e.parameters.map(p => ensureUnique(set, p)).map(p => `${p.name}${p.optional ? "?" : ""}: ${type(Object.values(schema.EDocParamType)[Object.keys(schema.EDocParamType).indexOf(p.type)])}`).join(', ');
                         const retValue = e.returnvalues.length > 0 ? e.returnvalues[0].type : Object.keys(schema.EDocParamType)[Object.values(schema.EDocParamType).indexOf(schema.EDocParamType.Void)];
                         const retOptional = e.returnvalues.length > 0 ? e.returnvalues[0].optional : false;
                         output += docs(e);
-                        output += '\t' + `function ${name}(${params}): ${type(Object.values(schema.EDocParamType)[Object.keys(schema.EDocParamType).indexOf(retValue)])}${retOptional ? " | undefined" : ""}` + '\n';
+                        const reserved = isReserved(name);
+                        const funcName = reserved ? reserved.alt : name;
+                        output += '\t' + `function ${funcName}(${params}): ${type(Object.values(schema.EDocParamType)[Object.keys(schema.EDocParamType).indexOf(retValue)])}${retOptional ? " | undefined" : ""}` + '\n';
+                        if (reserved) output += '\t' + `export { ${reserved.alt} as ${reserved.name} }` + '\n';
                     } break;
                 }
             });

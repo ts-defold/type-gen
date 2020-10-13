@@ -52,7 +52,7 @@ function parseName(input: string): { name: string, optional: boolean } {
     return { name, optional };
 }
 
-export function parse(input: Array<schema.IDocJson>, groups: Array<schema.EDocGroup> = [schema.EDocGroup.Script, schema.EDocGroup.Components, schema.EDocGroup.Extensions]): Array<schema.IDocJson> {
+export function parse(input: Array<schema.IDocJson>, groups: Array<schema.EDocGroup> = [schema.EDocGroup.System, schema.EDocGroup.Script, schema.EDocGroup.Components, schema.EDocGroup.Extensions]): Array<schema.IDocJson> {
     
     const docs = input
         .filter(doc => groups.includes(doc.info.group))
