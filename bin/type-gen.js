@@ -340,7 +340,7 @@ function generate(input, info, types) {
                         const reserved = isReserved(name);
                         const funcName = reserved ? reserved.alt : name;
                         const funcExp = reserved ? "" : exp;
-                        if (i.info.group == schema$1.EDocGroup.Script && scriptFunctions.includes(funcName)) {
+                        if (i.info.group == schema$1.EDocGroup.System && scriptFunctions.includes(funcName)) {
                             output.slice(0, -1); // skip reserved functions
                         }
                         else {
