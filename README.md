@@ -36,6 +36,10 @@ npm install @ts-defold/type-gen
 npm run type-gen
 ```
 
-<p align="center">
-  Typescript ♥ Defold
+### Shoutouts 📢
+@dasannikov and [DefoldTypescript](https://github.com/dasannikov/DefoldTypeScript) for a starting point and inspiration
+[TypeScriptToLoua](https://github.com/TypeScriptToLua/TypeScriptToLua) for the awesome community and tools
+@hazzard993, @ark120202, @Perryvw and all the fine folks over on the [tstl discord server](https://discord.gg/BWAq58Y).
+<p align="center" class="h4">
+  Typescript :heart: Defold
 </p>
