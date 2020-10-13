@@ -21,10 +21,10 @@
     "bin/**/*.js"
   ],
   "scripts": {
-    "build": "tsc && npm run build-types",
-    "build-types": "node dist/index.js",
-    "bundle": "tsc && npm run bundle-bin",
-    "bundle-bin": "rollup --config"
+    "build": "npm run compile && npm run generate-types && npm run bundle",
+    "compile": "tsc",
+    "generate-types": "node dist/index.js",
+    "bundle": "rollup --config"
   },
   "dependencies": {
     "got": "^11.7.0",

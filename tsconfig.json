@@ -18,9 +18,10 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true,
     },
+    "include": ["src"],
     "exclude": [
-        "./node_modules/",
-        "./dist",
-        "./bin"
+        "node_modules",
+        "dist",
+        "bin"
     ]
 }

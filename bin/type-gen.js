@@ -44,6 +44,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.EDocParamType = exports.EDocElemType = exports.EDocGroup = void 0;
 var EDocGroup;
 (function (EDocGroup) {
+    EDocGroup["System"] = "SYSTEM";
     EDocGroup["Script"] = "SCRIPT";
     EDocGroup["Components"] = "COMPONENTS";
     EDocGroup["Extensions"] = "EXTENSIONS";
@@ -139,7 +140,7 @@ function parseName(input) {
     const name = rawName.replace(/^[^a-zA-Z_$]|[^0-9a-zA-Z_$]/g, "_");
     return { name, optional };
 }
-function parse(input, groups = [schema$1.EDocGroup.Script, schema$1.EDocGroup.Components, schema$1.EDocGroup.Extensions]) {
+function parse(input, groups = [schema$1.EDocGroup.System, schema$1.EDocGroup.Script, schema$1.EDocGroup.Components, schema$1.EDocGroup.Extensions]) {
     const docs = input
         .filter(doc => groups.includes(doc.info.group))
         .sort((a, b) => groups.indexOf(a.info.group) - groups.indexOf(b.info.group));
@@ -237,6 +238,19 @@ function type(type) {
         return schema$1.EDocParamType.Any; // Not certain what translates into undefined yet
     return type;
 }
+function isReserved(name) {
+    const reserved = ["delete"];
+    return reserved.includes(name) ? { alt: name + '$', name } : null;
+}
+function ensureUnique(set, e) {
+    if (!set.has(e.name)) {
+        set.set(e.name, 0);
+        return e;
+    }
+    const count = set.get(e.name);
+    set.set(e.name, (count ? count : 0) + 1);
+    return Object.assign({}, e, { name: `${e.name}${set.get(e.name)}` });
+}
 function hr() {
     return `// =^..^=   =^..^=   =^..^=    =^..^=    =^..^=    =^..^=    =^..^= //` + '\n\n';
 }
@@ -297,11 +311,16 @@ function generate(input, info, types) {
                         break;
                     case schema$1.EDocElemType.Function:
                         {
-                            const params = e.parameters.map(p => `${p.name}${p.optional ? "?" : ""}: ${type(Object.values(schema$1.EDocParamType)[Object.keys(schema$1.EDocParamType).indexOf(p.type)])}`).join(', ');
+                            const set = new Map();
+                            const params = e.parameters.map(p => ensureUnique(set, p)).map(p => `${p.name}${p.optional ? "?" : ""}: ${type(Object.values(schema$1.EDocParamType)[Object.keys(schema$1.EDocParamType).indexOf(p.type)])}`).join(', ');
                             const retValue = e.returnvalues.length > 0 ? e.returnvalues[0].type : Object.keys(schema$1.EDocParamType)[Object.values(schema$1.EDocParamType).indexOf(schema$1.EDocParamType.Void)];
                             const retOptional = e.returnvalues.length > 0 ? e.returnvalues[0].optional : false;
                             output += docs(e);
-                            output += '\t' + `function ${name}(${params}): ${type(Object.values(schema$1.EDocParamType)[Object.keys(schema$1.EDocParamType).indexOf(retValue)])}${retOptional ? " | undefined" : ""}` + '\n';
+                            const reserved = isReserved(name);
+                            const funcName = reserved ? reserved.alt : name;
+                            output += '\t' + `function ${funcName}(${params}): ${type(Object.values(schema$1.EDocParamType)[Object.keys(schema$1.EDocParamType).indexOf(retValue)])}${retOptional ? " | undefined" : ""}` + '\n';
+                            if (reserved)
+                                output += '\t' + `export { ${reserved.alt} as ${reserved.name} }` + '\n';
                         }
                         break;
                 }
@@ -473,7 +492,7 @@ void (async () => {
     await fs_1.default.promises.rmdir(docPath, { recursive: true });
     await dr.cleanup();
     // Parse and Generate
-    const parsedDocs = parser.parse(docs, [schema.EDocGroup.Script, schema.EDocGroup.Components, schema.EDocGroup.Extensions]);
+    const parsedDocs = parser.parse(docs, [schema.EDocGroup.System, schema.EDocGroup.Script, schema.EDocGroup.Components, schema.EDocGroup.Extensions]);
     const output = generator.generate(parsedDocs, { channel, tag, sha1 }, builtIns_1.default);
     await fs_1.default.promises.writeFile(path_1.default.join(process.cwd(), out), output);
 })();
