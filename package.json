@@ -1,6 +1,6 @@
 {
   "name": "@ts-defold/type-gen",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Typescript type generator for Defold",
   "repository": "github:ts-defold/type-gen",
   "bugs": {
