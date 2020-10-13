@@ -1,6 +1,6 @@
 {
   "name": "@ts-defold/type-gen",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Typescript type generator for Defold",
   "repository": "github:ts-defold/type-gen",
   "bugs": {
@@ -17,8 +17,8 @@
   "main": "dist/build.js",
   "bin": "bin/build.js",
   "files": [
-    "dist/*.js",
-    "bin/*.js"
+    "dist/**/*.js",
+    "bin/**/*.js"
   ],
   "scripts": {
     "build": "tsc && npm run build-types",
