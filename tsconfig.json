@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "target": "es2019",
+        "lib": ["es2019"],
+        "module": "commonjs",
+        "esModuleInterop": true,
+        "experimentalDecorators": true,
+        "moduleResolution": "node",
+
+        "rootDir": "src",
+        "outDir": "dist",
+        "declaration": true,
+        "sourceMap": true,
+        "newLine": "LF",
+        "stripInternal": true,
+
+        "strict": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true
+    },
+    "include": ["src"]
+}

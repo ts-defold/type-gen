@@ -102,3 +102,6 @@ dist
 
 # TernJS port file
 .tern-port
+
+# default location for generated types
+index.d.ts
