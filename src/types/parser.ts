@@ -66,11 +66,11 @@ function inNamespace(doc: schema.IDocJson): boolean {
 
 export function parse(input: Array<schema.IDocJson>, groups: Array<schema.EDocGroup> = [schema.EDocGroup.System, schema.EDocGroup.Script, schema.EDocGroup.Components, schema.EDocGroup.Extensions]): Array<schema.IDocJson> {
     
-    const docs = input
-        .filter(doc => groups.includes(doc.info.group))
-        .sort((a,b) => groups.indexOf(a.info.group) - groups.indexOf(b.info.group));
+    const alphabetical = input.slice().sort((a, b) => a.info.namespace.localeCompare(b.info.namespace));
+    const filtered = alphabetical.filter(doc => groups.includes(doc.info.group));
+    const grouped = filtered.slice().sort((a,b) => groups.indexOf(a.info.group) - groups.indexOf(b.info.group));
     
-    return docs.map(doc => {
+    return grouped.map(doc => {
         
         const elements = doc.elements.map(el => {
             return {
