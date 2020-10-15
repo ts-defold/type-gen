@@ -96,7 +96,7 @@ export function generate(input: Array<schema.IDocJson>, info: GeneratorInfo, typ
                 output += tab + `${exp} type ${d.name} = ${unionOrIntersect}{` + '\n';
 
                 for (const k in d.definition) {
-                    output += tab + '\t' + `${k}: ${type([d.definition[k]])},` + '\n';
+                    output += tab + '\t' + `${k}: ${d.definition[k]},` + '\n';
                 }
 
                 output += tab + `}` + '\n';
@@ -157,7 +157,7 @@ export function generate(input: Array<schema.IDocJson>, info: GeneratorInfo, typ
                     else {
                         const set = new Map<string, number>();
                         const params = e.parameters.map(p => ensureUnique(set, p)).map(p => `${p.name}${p.optional ? "?" : ""}: ${type(p.type)}`).join(', ');
-                        const retValues = e.returnvalues.length > 0 ? e.returnvalues[0].type : [schema.EDocParamType.Void];
+                        const retValues = e.returnvalues.length > 0 ? e.returnvalues[0].type : ['Void' as schema.EDocParamType]; // need a string of the key, to match parser
                         const retOptional = e.returnvalues.length > 0 ? e.returnvalues[0].optional : false;
                         output += docs(e, TAB);
                         output += TAB + `${funcExp} function ${funcName}(${params}): ${type(retValues)}${retOptional ? " | undefined" : ""}` + '\n';
