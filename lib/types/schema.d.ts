@@ -31,9 +31,12 @@ export declare enum EDocParamType {
     Unknown = ""
 }
 export declare const typeMap: Record<string, EDocParamType>;
+export declare const reverseTypeMap: {
+    [k: string]: string;
+};
 export interface IDocParam {
     name: string;
-    type: EDocParamType;
+    type: EDocParamType[];
     doc: string;
     optional: boolean;
 }

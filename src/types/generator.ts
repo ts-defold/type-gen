@@ -34,13 +34,21 @@ function docs(input: schema.IDocElement, TAB = '\t') {
     return out;
 }
 
-function type(type: schema.EDocParamType) {
-    if (type == schema.EDocParamType.Unknown) return schema.EDocParamType.Any;
-    if (type == schema.EDocParamType.Table) return schema.EDocParamType.Any;
-    if (type === undefined || type == "constant") return schema.EDocParamType.Any; // Not certain what translates into undefined yet
-    return type;
-}
+function type(input: schema.EDocParamType[]): string {
+    const types = input.map(t => {
+        let type = Object.values(schema.EDocParamType)[Object.keys(schema.EDocParamType).indexOf(t)];
+        if (type == schema.EDocParamType.Unknown) type =schema.EDocParamType.Any;
+        if (type == schema.EDocParamType.Table) type = schema.EDocParamType.Any;
+        if (type == schema.EDocParamType.Constant) type = schema.EDocParamType.Any;
+        if (type === undefined) type = schema.EDocParamType.Any;
 
+        return type;
+    });
+
+    // Unsure the parameter names are unique (no dupes), and if a single param is any, then the union is unnecessary
+    const unique = [...new Set(types)];
+    return (unique.includes(schema.EDocParamType.Any) ? [schema.EDocParamType.Any] : unique).join(' | ');
+}
 
 function isReserved(name: string): { alt: string, name: string } | null {
     const reserved = ["delete"];
@@ -88,7 +96,7 @@ export function generate(input: Array<schema.IDocJson>, info: GeneratorInfo, typ
                 output += tab + `${exp} type ${d.name} = ${unionOrIntersect}{` + '\n';
 
                 for (const k in d.definition) {
-                    output += tab + '\t' + `${k}: ${type(d.definition[k])},` + '\n';
+                    output += tab + '\t' + `${k}: ${type([d.definition[k]])},` + '\n';
                 }
 
                 output += tab + `}` + '\n';
@@ -148,11 +156,11 @@ export function generate(input: Array<schema.IDocJson>, info: GeneratorInfo, typ
                     }
                     else {
                         const set = new Map<string, number>();
-                        const params = e.parameters.map(p => ensureUnique(set, p)).map(p => `${p.name}${p.optional ? "?" : ""}: ${type(Object.values(schema.EDocParamType)[Object.keys(schema.EDocParamType).indexOf(p.type)])}`).join(', ');
-                        const retValue = e.returnvalues.length > 0 ? e.returnvalues[0].type : Object.keys(schema.EDocParamType)[Object.values(schema.EDocParamType).indexOf(schema.EDocParamType.Void)];
+                        const params = e.parameters.map(p => ensureUnique(set, p)).map(p => `${p.name}${p.optional ? "?" : ""}: ${type(p.type)}`).join(', ');
+                        const retValues = e.returnvalues.length > 0 ? e.returnvalues[0].type : [schema.EDocParamType.Void];
                         const retOptional = e.returnvalues.length > 0 ? e.returnvalues[0].optional : false;
                         output += docs(e, TAB);
-                        output += TAB + `${funcExp} function ${funcName}(${params}): ${type(Object.values(schema.EDocParamType)[Object.keys(schema.EDocParamType).indexOf(retValue)])}${retOptional ? " | undefined" : ""}` + '\n';
+                        output += TAB + `${funcExp} function ${funcName}(${params}): ${type(retValues)}${retOptional ? " | undefined" : ""}` + '\n';
                         if (reserved) output += '\t' + `export { ${reserved.alt} as ${reserved.name} }` + '\n';
                     }
                 } break;

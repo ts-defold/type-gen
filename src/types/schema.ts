@@ -58,9 +58,11 @@ export const typeMap: Record<string, EDocParamType> = {
     "": EDocParamType.Unknown
 };
 
+export const reverseTypeMap = Object.fromEntries(Object.entries(EDocParamType).map(([key, value]) => [value, key]));
+
 export interface IDocParam {
     name: string,
-    type: EDocParamType,
+    type: EDocParamType[],
     doc: string,
     optional: boolean
 }

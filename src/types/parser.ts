@@ -1,12 +1,3 @@
-
-// parser expects an array of json objects already serialized from disk
-
-// When parsing we should only accept things we have types for in our typeMap and emit to the log if we come accross a missing type
-
-// Each doc Must have an elements [] to parse
-
-// We need to translate the docs to js doc format above each call
-
 import * as schema from "./schema";
 
 export interface ParserOpts {
@@ -35,12 +26,13 @@ function parseHtml(input: string, isParam?: boolean): string {
         .replace(/<.*?>/g, "");
 }
 
-function parseType(input: string, typeMap: Record<string, schema.EDocParamType>): schema.EDocParamType {
+function parseType(input: string, typeMap: Record<string, schema.EDocParamType>): schema.EDocParamType[] {
     const result = /.*<span class="type">(.+)<\/span>/.exec(input);
-    const type = result && result.length > 1 ? result[1] : "";
-    const key = typeMap[type];
-    const paramType = Object.fromEntries(Object.entries(schema.EDocParamType).map(([key, value]) => [value, key]));
-    return paramType[ key ? key : ""] ? paramType[ key ? key : ""] as schema.EDocParamType : schema.EDocParamType.Unknown;
+    const types = (result && result.length > 1 ? result[1] : "").split("|").map(t => t.trim()).map(t => {
+        const key = typeMap[t];
+        return schema.reverseTypeMap[ key ? key : ""] ? schema.reverseTypeMap[ key ? key : ""] as schema.EDocParamType : schema.EDocParamType.Unknown;
+    });
+    return types;
 }
 
 function parseName(input: string): { name: string, optional: boolean } {
