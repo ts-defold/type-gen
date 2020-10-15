@@ -1,6 +1,6 @@
 {
   "name": "@ts-defold/type-gen",
-  "version": "0.1.9",
+  "version": "0.2.1",
   "description": "Typescript type generator for Defold",
   "repository": "github:ts-defold/type-gen",
   "bugs": {
@@ -17,7 +17,7 @@
   "main": "dist/index.js",
   "bin": "bin/type-gen.js",
   "files": [
-    "dist/**/*.js",
+    "lib/**/*.{js,d.ts}",
     "bin/**/*.js"
   ],
   "scripts": {
