@@ -30,6 +30,7 @@ export declare enum EDocParamType {
     Any = "any",
     Unknown = ""
 }
+export declare const typeMap: Record<string, EDocParamType>;
 export interface IDocParam {
     name: string;
     type: EDocParamType;

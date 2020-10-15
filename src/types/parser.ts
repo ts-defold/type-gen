@@ -35,12 +35,12 @@ function parseHtml(input: string, isParam?: boolean): string {
         .replace(/<.*?>/g, "");
 }
 
-function parseType(input: string): schema.EDocParamType {
+function parseType(input: string, typeMap: Record<string, schema.EDocParamType>): schema.EDocParamType {
     const result = /.*<span class="type">(.+)<\/span>/.exec(input);
     const type = result && result.length > 1 ? result[1] : "";
+    const key = typeMap[type];
     const paramType = Object.fromEntries(Object.entries(schema.EDocParamType).map(([key, value]) => [value, key]));
-    
-    return paramType[type] ? paramType[type] as schema.EDocParamType : schema.EDocParamType.Unknown;
+    return paramType[ key ? key : ""] ? paramType[ key ? key : ""] as schema.EDocParamType : schema.EDocParamType.Unknown;
 }
 
 function parseName(input: string): { name: string, optional: boolean } {
@@ -64,8 +64,10 @@ function inNamespace(doc: schema.IDocJson): boolean {
     return !hasFunction || funcNamespace;
 }
 
-export function parse(input: Array<schema.IDocJson>, groups: Array<schema.EDocGroup> = [schema.EDocGroup.System, schema.EDocGroup.Script, schema.EDocGroup.Components, schema.EDocGroup.Extensions]): Array<schema.IDocJson> {
+const defaults = [schema.EDocGroup.System, schema.EDocGroup.Script, schema.EDocGroup.Components, schema.EDocGroup.Extensions];
+export function parse(input: Array<schema.IDocJson>, groups: Array<schema.EDocGroup> = defaults, typeMap?: Record<string, schema.EDocParamType>): Array<schema.IDocJson> {
     
+    const userTypeMap = Object.assign(schema.typeMap, typeMap || {});
     const alphabetical = input.slice().sort((a, b) => a.info.namespace.localeCompare(b.info.namespace));
     const filtered = alphabetical.filter(doc => groups.includes(doc.info.group));
     const grouped = filtered.slice().sort((a,b) => groups.indexOf(a.info.group) - groups.indexOf(b.info.group));
@@ -82,7 +84,7 @@ export function parse(input: Array<schema.IDocJson>, groups: Array<schema.EDocGr
                     const ext = parseName(p.name);
                     return {
                         name: ext.name,
-                        type: parseType(p.doc),
+                        type: parseType(p.doc, userTypeMap),
                         doc: parseHtml(p.doc, true),
                         optional: ext.optional
                     };
@@ -91,7 +93,7 @@ export function parse(input: Array<schema.IDocJson>, groups: Array<schema.EDocGr
                     const ext = parseName(r.name);
                     return {
                         name: ext.name,
-                        type: parseType(r.doc),
+                        type: parseType(r.doc, userTypeMap),
                         doc: parseHtml(r.doc, true),
                         optional: ext.optional
                     };

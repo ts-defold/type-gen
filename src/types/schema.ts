@@ -33,6 +33,31 @@ export enum EDocParamType {
     Unknown = ""
 }
 
+export const typeMap: Record<string, EDocParamType> = {
+    "table": EDocParamType.Table,
+    "object": EDocParamType.Object,
+    "constant": EDocParamType.Constant,
+    "number": EDocParamType.Number,
+    "string": EDocParamType.String,
+    "boolean": EDocParamType.Boolean,
+    "hash": EDocParamType.Hash,
+    "url": EDocParamType.Url,
+    "node": EDocParamType.Node,
+    "buffer": EDocParamType.Buffer,
+    "bufferstream": EDocParamType.BufferStream,
+    "vmath.vector3": EDocParamType.Vector3,
+    "vector3": EDocParamType.Vector3,
+    "vmath.vector4": EDocParamType.Vector4,
+    "vector4": EDocParamType.Vector4,
+    "vmath.matrix4": EDocParamType.Matrix4,
+    "matrix4": EDocParamType.Matrix4,
+    "vmath.quaternion": EDocParamType.Quaternion,
+    "quaternion": EDocParamType.Quaternion,
+    "void": EDocParamType.Void,
+    "any": EDocParamType.Any,
+    "": EDocParamType.Unknown
+};
+
 export interface IDocParam {
     name: string,
     type: EDocParamType,
