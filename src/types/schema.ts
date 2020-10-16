@@ -53,6 +53,7 @@ export const typeMap: Record<string, EDocParamType> = {
     "matrix4": EDocParamType.Matrix4,
     "vmath.quaternion": EDocParamType.Quaternion,
     "quaternion": EDocParamType.Quaternion,
+    "quatertion": EDocParamType.Quaternion, // typo in docs (TODO: submit PR)
     "quat": EDocParamType.Quaternion,
     "void": EDocParamType.Void,
     "any": EDocParamType.Any,
