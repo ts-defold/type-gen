@@ -1,4 +1,4 @@
-import * as schema from "./schema";
+import * as schema from "../types/schema";
 
 export interface GeneratorInfo {
     channel: string,
