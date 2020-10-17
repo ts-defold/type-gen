@@ -2,6 +2,7 @@
 > TypeScript type generator for Defold
 <div align="center">
   <a href="https://discord.gg/eukcq5m"><img alt="Chat with us!" src="https://img.shields.io/discord/766898804896038942.svg?colorB=7581dc&logo=discord&logoColor=white"></a>
+  <a href="https://www.npmjs.com/package/@ts-defold/type-gen"><img alt="npm install" src="https://img.shields.io/npm/dt/@ts-defold/type-gen?color=%23CA0000&logo=npm"?</a>
 </div>
 
 type-gen is a TypeScript declarations generator for the [Defold](https://github.com/defold/defold) game engine.
