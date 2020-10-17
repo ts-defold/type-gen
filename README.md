@@ -1,7 +1,9 @@
 # @ts-defold/type-gen
-> Typescript type generator for Defold
+<a href="https://discord.gg/eukcq5m"><img alt="Chat with us!" src="https://img.shields.io/discord/766898804896038942.svg?colorB=7581dc&logo=discord&logoColor=white"></a>
+<a href="https://www.npmjs.com/package/@ts-defold/type-gen"><img alt="npm install" src="https://img.shields.io/npm/dt/@ts-defold/type-gen?color=%23CA0000&label=npm&logo=npm"></a>
+> TypeScript type generator for Defold
 
-type-gen is a typescript declarations generator for the [Defold](https://github.com/defold/defold) game engine.
+type-gen is a TypeScript declarations generator for the [Defold](https://github.com/defold/defold) game engine.
 - types are parsed generated from the [offical documentation](https://defold.com/ref/stable/go/)
 - types will avoid `any` if they can
 - vmath.* types can all be used with number operators through [Intersection Types](https://www.typescriptlang.org/docs/handbook/unions-and-intersections.html)
@@ -28,18 +30,30 @@ npm install
 npm run build
 ```
 
-Finally, if you would like to use/include the type generator over [@ts-defold/types](https://github.com/ts-defold/types) then simply:
+Alternatively, if you would like to just generate your types without the dependency then simply:
 ```sh
 npx @ts-defold/type-gen
 #or
-npm install @ts-defold/type-gen
-npm run type-gen
+npx @ts-defold/type-gen -- defold.d.ts --channel stable --api latest
+```
+
+@ts-defold/type-gen can optionally take in arguments:
+- **[defold.d.ts]** path to generated output file
+- **--channel** [stable | beta | alpha]
+- **--api** [latest | 1.2.xxx]
+
+If being used in a project locked to a specific release channel or version of defold you may add configuration settings in your `package.json` instead:
+```json
+"ts-defold": {
+    "channel": "stable",
+    "output": "index.d.ts"
+},
 ```
 
 ### Shoutouts 📢
-@dasannikov and [DefoldTypescript](https://github.com/dasannikov/DefoldTypeScript) for a starting point and inspiration
+[@dasannikov](https://github.com/dasannikov) and [DefoldTypescript](https://github.com/dasannikov/DefoldTypeScript) for a starting point and inspiration
 [TypeScriptToLoua](https://github.com/TypeScriptToLua/TypeScriptToLua) for the awesome community and tools
-@hazzard993, @ark120202, @Perryvw and all the fine folks over on the [tstl discord server](https://discord.gg/BWAq58Y).
+[@hazzard993](https://github.com/hazzard993), [@ark120202](https://github.com/ark120202), [@Perryvw](https://github.com/Perryvw) and all the fine folks over on the [tstl discord server](https://discord.gg/BWAq58Y).
 <p align="center" class="h4">
-  Typescript :heart: Defold
+  TypeScript :heart: Defold
 </p>
