@@ -96,7 +96,7 @@ function hr(): string {
     return `// =^..^=   =^..^=   =^..^=    =^..^=    =^..^=    =^..^=    =^..^= //` + '\n\n';
 }
 
-export function generate(input: Array<schema.IDocJson>, info: GeneratorInfo, types?: Array<schema.IDocTypes>): string  {
+export function generate(input: Array<schema.IDocJson>, info: GeneratorInfo, types?: Array<schema.IDocTypes>, overrides?: Array<schema.IDocJson>): string  {
 
     let output = "";
 
@@ -142,6 +142,24 @@ export function generate(input: Array<schema.IDocJson>, info: GeneratorInfo, typ
     const modules = sorted.filter(m => {
         const el = m.elements.find(e => printable.includes(e.type));
         if (el) return m;
+    });
+
+    // Apply overrides
+    overrides?.forEach(o => {
+        modules.forEach(m => {
+            if (o.info.namespace == m.info.namespace) {
+                o.elements.forEach(overrideElem => {
+                    const targetElem = m.elements.find(elem => elem.name == overrideElem.name);
+                    if (targetElem) {
+                        targetElem.parameters = overrideElem.parameters;
+                        targetElem.returnvalues = overrideElem.returnvalues;
+                        targetElem.type = overrideElem.type;
+                        if (overrideElem.brief) targetElem.brief = overrideElem.brief;
+                        if (overrideElem.description) targetElem.description = overrideElem.description;
+                    }
+                })
+            }
+        })
     });
 
     // Modules

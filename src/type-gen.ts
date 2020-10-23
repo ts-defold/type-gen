@@ -9,6 +9,7 @@ import { IDocJson, EDocGroup  } from "./types/schema";
 import { parse } from "./gen/parser";
 import { generate } from "./gen/generator";
 import builtInTypes from "./types/builtIns";
+import overrides from "./types/overrides";
 
 interface DefoldInfo {
     version: string,
@@ -63,7 +64,7 @@ export default async function (channel: string, version: string, outFile?:string
 
     // Parse and Generate
     const parsedDocs = parse(docs, [EDocGroup.System, EDocGroup.Script, EDocGroup.Components, EDocGroup.Extensions]);
-    const output = generate(parsedDocs, { channel, tag, sha1 }, builtInTypes);
+    const output = generate(parsedDocs, { channel, tag, sha1 }, builtInTypes, overrides);
 
     await fs.promises.writeFile(path.join(process.cwd(), outFile ? outFile : "index.d.ts"), output);
 };

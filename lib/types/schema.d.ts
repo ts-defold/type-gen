@@ -26,6 +26,8 @@ export declare enum EDocParamType {
     Vector4 = "vmath.vector4",
     Matrix4 = "vmath.matrix4",
     Quaternion = "vmath.quaternion",
+    NumberArray = "Array<number>",
+    StringArray = "Array<string>",
     Void = "void",
     Any = "any",
     Unknown = ""

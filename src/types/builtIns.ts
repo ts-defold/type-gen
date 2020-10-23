@@ -31,7 +31,7 @@ const types: Array<IDocTypes> = [
             {
                 name: "bufferstream",
                 unions: [],
-                intersection: EDocParamType.Unknown,
+                intersection: EDocParamType.NumberArray,
                 definition: {}
             }
         ]

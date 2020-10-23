@@ -1,4 +1,4 @@
-module.exports = {
+export default {
     "env": {
         "es2021": true,
         "node": true
@@ -16,6 +16,7 @@ module.exports = {
         "@typescript-eslint"
     ],
     "rules": {
-        "@typescript-eslint/semi": "warn"
+        "no-var": "error",
+        "@typescript-eslint/semi": "error"
     }
 };

@@ -28,6 +28,8 @@ export enum EDocParamType {
     Vector4 = "vmath.vector4",
     Matrix4 = "vmath.matrix4",
     Quaternion = "vmath.quaternion",
+    NumberArray = "Array<number>",
+    StringArray = "Array<string>",
     Void = "void",
     Any = "any",
     Unknown = ""
@@ -55,6 +57,8 @@ export const typeMap: Record<string, EDocParamType> = {
     "quaternion": EDocParamType.Quaternion,
     "quatertion": EDocParamType.Quaternion, // typo in docs [defold/defold #5278]
     "quat": EDocParamType.Quaternion,
+    "Array<number>": EDocParamType.NumberArray,
+    "Array<string>": EDocParamType.StringArray,
     "void": EDocParamType.Void,
     "any": EDocParamType.Any,
     "": EDocParamType.Unknown
