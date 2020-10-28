@@ -7,31 +7,31 @@ const types: Array<IDocTypes> = [
             {
                 name: "hash",
                 unions: [],
-                intersection: EDocParamType.Unknown,
+                intersections: [],
                 definition: {}
             },
             {
                 name: "url",
                 unions: [],
-                intersection: EDocParamType.Unknown,
+                intersections: [],
                 definition: {}
             },
             {
                 name: "node",
                 unions: [],
-                intersection: EDocParamType.Unknown,
+                intersections: [],
                 definition: {}
             },
             {
                 name: "buffer",
                 unions: [],
-                intersection: EDocParamType.Unknown,
+                intersections: [],
                 definition: {}
             },
             {
                 name: "bufferstream",
                 unions: [],
-                intersection: EDocParamType.NumberArray,
+                intersections: [EDocParamType.NumberArray, EDocParamType.LuaUserdata],
                 definition: {}
             }
         ]
@@ -42,7 +42,7 @@ const types: Array<IDocTypes> = [
             {
                 name: "vector3",
                 unions: [],
-                intersection: EDocParamType.Number,
+                intersections: [EDocParamType.Number],
                 definition: {
                     x: EDocParamType.Number,
                     y: EDocParamType.Number,
@@ -52,7 +52,7 @@ const types: Array<IDocTypes> = [
             {
                 name: "vector4",
                 unions: [],
-                intersection: EDocParamType.Number,
+                intersections: [EDocParamType.Number],
                 definition: {
                     x: EDocParamType.Number,
                     y: EDocParamType.Number,
@@ -63,7 +63,7 @@ const types: Array<IDocTypes> = [
             {
                 name: "matrix4",
                 unions: [],
-                intersection: EDocParamType.Number,
+                intersections: [EDocParamType.Number],
                 definition: {
                     c0: EDocParamType.Vector4,
                     c1: EDocParamType.Vector4,
@@ -90,7 +90,7 @@ const types: Array<IDocTypes> = [
             {
                 name: "quaternion",
                 unions: [],
-                intersection: EDocParamType.Number,
+                intersections: [EDocParamType.Number],
                 definition: {
                     x: EDocParamType.Number,
                     y: EDocParamType.Number,

@@ -30,6 +30,7 @@ export declare enum EDocParamType {
     StringArray = "Array<string>",
     Void = "void",
     Any = "any",
+    LuaUserdata = "LuaUserdata",
     Unknown = ""
 }
 export declare const typeMap: Record<string, EDocParamType>;
@@ -45,7 +46,7 @@ export interface IDocParam {
 export interface IDocTypeDecl {
     name: string;
     unions: Array<EDocParamType>;
-    intersection: EDocParamType;
+    intersections: Array<EDocParamType>;
     definition: Record<string, EDocParamType>;
 }
 export interface IDocTypes {

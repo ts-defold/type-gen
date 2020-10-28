@@ -32,6 +32,7 @@ export enum EDocParamType {
     StringArray = "Array<string>",
     Void = "void",
     Any = "any",
+    LuaUserdata = "LuaUserdata",
     Unknown = ""
 }
 
@@ -76,7 +77,7 @@ export interface IDocParam {
 export interface IDocTypeDecl {
     name: string,
     unions: Array<EDocParamType>,
-    intersection: EDocParamType,
+    intersections: Array<EDocParamType>,
     definition: Record<string, EDocParamType>,
 }
 

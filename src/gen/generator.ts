@@ -115,7 +115,7 @@ export function generate(input: Array<schema.IDocJson>, info: GeneratorInfo, typ
             const exp = t.namespace ? "export" : "declare";
             
             t.types.forEach(d => {
-                const unionOrIntersect = d.unions.length ? `${d.unions.join(' | ')} ` : d.intersection ? `${d.intersection} & ` : "";
+                const unionOrIntersect = d.unions.length ? `${d.unions.join(' | ')} ` : d.intersections.length ? `${d.intersections.join(' & ')} & ` : "";
                 
                 output += '\n';
                 output += tab + `${exp} type ${d.name} = ${unionOrIntersect}{` + '\n';
