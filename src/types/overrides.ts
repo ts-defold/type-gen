@@ -37,6 +37,103 @@ const overrides: Array<IDocJson> = [
                 description: ""
             }
         ]
+    },
+    {
+        info: {
+            namespace: "resource",
+            description: "",
+            group: EDocGroup.System
+        },
+        elements: [
+            {
+                name: "resource.atlas",
+                type: EDocElemType.Function,
+                parameters: [
+                    {
+                        name: "path",
+                        type: ["String" as EDocParamType],
+                        optional: true,
+                        doc: "resource path string to the resource"
+                    }
+                ],
+                returnvalues: [
+                    {
+                        name: "path",
+                        type: ["Hash" as EDocParamType],
+                        optional: false,
+                        doc: "a path hash to the binary version of the resource"
+                    }
+                ],
+                brief: "",
+                description: ""
+            },
+            {
+                name: "resource.font",
+                type: EDocElemType.Function,
+                parameters: [
+                    {
+                        name: "path",
+                        type: ["String" as EDocParamType],
+                        optional: true,
+                        doc: "resource path string to the resource"
+                    }
+                ],
+                returnvalues: [
+                    {
+                        name: "path",
+                        type: ["Hash" as EDocParamType],
+                        optional: false,
+                        doc: "a path hash to the binary version of the resource"
+                    }
+                ],
+                brief: "",
+                description: ""
+            },
+            {
+                name: "resource.material",
+                type: EDocElemType.Function,
+                parameters: [
+                    {
+                        name: "path",
+                        type: ["String" as EDocParamType],
+                        optional: true,
+                        doc: "resource path string to the resource"
+                    }
+                ],
+                returnvalues: [
+                    {
+                        name: "path",
+                        type: ["Hash" as EDocParamType],
+                        optional: false,
+                        doc: "a path hash to the binary version of the resource"
+                    }
+                ],
+                brief: "",
+                description: ""
+            },
+            {
+                name: "resource.texture",
+                type: EDocElemType.Function,
+                parameters: [
+                    {
+                        name: "path",
+                        type: ["String" as EDocParamType],
+                        optional: true,
+                        doc: "resource path string to the resource"
+                    }
+                ],
+                returnvalues: [
+                    {
+                        name: "path",
+                        type: ["Hash" as EDocParamType],
+                        optional: false,
+                        doc: "a path hash to the binary version of the resource"
+                    }
+                ],
+                brief: "",
+                description: ""
+            }
+        ]
     }
 ];
 
