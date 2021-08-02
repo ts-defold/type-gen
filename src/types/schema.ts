@@ -69,7 +69,7 @@ export const reverseTypeMap = Object.fromEntries(Object.entries(EDocParamType).m
 
 export interface IDocParam {
     name: string,
-    type: EDocParamType[],
+    types: EDocParamType[],
     doc: string,
     optional: boolean
 }

@@ -39,7 +39,7 @@ export declare const reverseTypeMap: {
 };
 export interface IDocParam {
     name: string;
-    type: EDocParamType[];
+    types: EDocParamType[];
     doc: string;
     optional: boolean;
 }

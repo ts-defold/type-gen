@@ -37,7 +37,7 @@ function docs(input: schema.IDocElement, TAB = '\t') {
 function type(input: schema.EDocParamType[]): string {
     const types = input.map(t => {
         let type = Object.values(schema.EDocParamType)[Object.keys(schema.EDocParamType).indexOf(t)];
-        if (type == schema.EDocParamType.Unknown) type =schema.EDocParamType.Any;
+        if (type == schema.EDocParamType.Unknown) type = schema.EDocParamType.Any;
         if (type == schema.EDocParamType.Table) type = schema.EDocParamType.Any;
         if (type == schema.EDocParamType.Constant) type = schema.EDocParamType.Any;
         if (type === undefined) type = schema.EDocParamType.Any;
@@ -52,7 +52,7 @@ function type(input: schema.EDocParamType[]): string {
 
 function isOverloadedFunction(e: schema.IDocElement): { overload: boolean, start: number } {
     if (e.parameters.length && e.returnvalues.length) {
-        const params = e.parameters.map(p => p.type).concat(e.returnvalues.map(r => r.type));
+        const params = e.parameters.map(p => p.types).concat(e.returnvalues.map(r => r.types));
         let isOverload = true;
         let reqCount = 1;
         let overloadRun = -1;
@@ -169,7 +169,13 @@ export function generate(input: Array<schema.IDocJson>, info: GeneratorInfo, typ
         output += '\n';
         if (i.info.namespace) output += `declare namespace ${i.info.namespace} {` + '\n';
 
-        const elements = i.elements.sort((a, b) => Object.keys(schema.EDocElemType).indexOf(a.type) - Object.keys(schema.EDocElemType).indexOf(b.type));
+        // Sort element output by name then type
+        const elements = i.elements.sort((a, b) => {
+            const keys = Object.values(schema.EDocElemType);
+            return ((a.name > b.name ? 1 : a.name < b.name ? -1 : 0) 
+                || keys.indexOf(a.type) - keys.indexOf(b.type));
+        });
+
         elements.forEach(e => {
             const name = e.name.replace(`${i.info.namespace}.`, "");
             output += '\n';
@@ -201,12 +207,12 @@ export function generate(input: Array<schema.IDocJson>, info: GeneratorInfo, typ
                         output += docs(e, TAB);
                         const { overload, start } = isOverloadedFunction(e);
                         if (overload && e.returnvalues.length) {
-                            e.returnvalues[0].type.forEach((ret, i) => {
+                            e.returnvalues[0].types.forEach((ret, i) => {
                                 const set = new Map<string, number>();
                                 let params: Array<string> = [];
                                 e.parameters.forEach((p, j) => {
                                     const uniqueParam = ensureUnique(set, p);
-                                    params.push(`${uniqueParam.name}${uniqueParam.optional ? "?" : ""}: ${type(j < start ? uniqueParam.type : [uniqueParam.type[i]])}`);
+                                    params.push(`${uniqueParam.name}${uniqueParam.optional ? "?" : ""}: ${type(j < start ? uniqueParam.types : [uniqueParam.types[i]])}`);
                                 });
                                 const optional = e.returnvalues[0].optional;
                                 output += TAB + `${funcExp} function ${funcName}(${params.join(', ')}): ${type([ret])}${optional ? " | undefined" : ""}` + '\n';
@@ -215,8 +221,8 @@ export function generate(input: Array<schema.IDocJson>, info: GeneratorInfo, typ
                         }
                         else {
                             const set = new Map<string, number>();
-                            const params = e.parameters.map(p => ensureUnique(set, p)).map(p => `${p.name}${p.optional ? "?" : ""}: ${type(p.type)}`).join(', ');
-                            const retValues = e.returnvalues.length > 0 ? e.returnvalues[0].type : ['Void' as schema.EDocParamType]; // need a string of the key, to match parser
+                            const params = e.parameters.map(p => ensureUnique(set, p)).map(p => `${p.name}${p.optional ? "?" : ""}: ${type(p.types)}`).join(', ');
+                            const retValues = e.returnvalues.length > 0 ? e.returnvalues[0].types : ['Void' as schema.EDocParamType]; // need a string of the key, to match parser
                             const retOptional = e.returnvalues.length > 0 ? e.returnvalues[0].optional : false;
                             output += TAB + `${funcExp} function ${funcName}(${params}): ${type(retValues)}${retOptional ? " | undefined" : ""}` + '\n';
                             if (reserved) output += '\t' + `export { ${reserved.alt} as ${reserved.name} }` + '\n';
