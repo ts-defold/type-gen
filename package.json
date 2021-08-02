@@ -21,6 +21,7 @@
     "bin/**/*.js"
   ],
   "scripts": {
+    "prepublishOnly": "npm run build",
     "build": "npm run compile && npm run generate-types",
     "compile": "tsc",
     "generate-types": "node lib/index.js",
