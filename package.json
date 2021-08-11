@@ -14,17 +14,18 @@
   "author": "Justin Walsh (@thejustinwalsh)",
   "homepage": "https://github.com/ts-defold/type-gen#readme",
   "license": "MIT",
-  "main": "dist/index.js",
+  "main": "lib/index.js",
   "bin": "bin/type-gen.js",
   "files": [
     "lib/**/*.{js,d.ts}",
     "bin/**/*.js"
   ],
   "scripts": {
-    "prepublishOnly": "npm run build",
+    "prepublishOnly": "npm run lint && npm run build",
     "build": "npm run compile && npm run generate-types",
     "compile": "tsc",
     "generate-types": "node lib/index.js",
+    "lint": "eslint --fix --ext .js,.ts .",
     "env": "node -e 'console.log(process.env)'"
   },
   "dependencies": {
