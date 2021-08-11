@@ -71,3 +71,21 @@ export interface IDocJson {
     info: IDocInfo;
     elements: Array<IDocElement>;
 }
+export interface IDocYamlEntry {
+    name: string;
+    desc: string;
+    type: string;
+}
+export interface IDocYaml extends IDocYamlEntry {
+    members: Array<IDocYamlEntry & {
+        examples: Array<string>;
+        parameters?: Array<IDocYamlEntry & {
+            optional?: boolean;
+        }>;
+        returns?: Array<{
+            name?: string;
+            desc: string;
+            type: string;
+        }>;
+    }>;
+}
