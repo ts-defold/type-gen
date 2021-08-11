@@ -1,13 +1,13 @@
-import fetch from "node-fetch";
-import AdmZip from "adm-zip";
-import fs from "fs";
-import path from "path";
-import yaml from "yaml";
-import * as schema from "./types/schema";
-import { parse } from "./gen/parser";
-import { generate } from "./gen/generator";
-import builtInTypes from "./types/builtIns";
-import overrides from "./types/overrides";
+import fetch from 'node-fetch';
+import AdmZip from 'adm-zip';
+import fs from 'fs';
+import path from 'path';
+import yaml from 'yaml';
+import * as schema from './types/schema';
+import { parse } from './gen/parser';
+import { generate } from './gen/generator';
+import builtInTypes from './types/builtIns';
+import overrides from './types/overrides';
 
 interface DefoldInfo {
   version: string;
@@ -28,9 +28,9 @@ export default async function (
   version: string,
   project?: string,
   outFile?: string
-) {
+): Promise<void> {
   // Pull down latest release info
-  channel = ["stable", "beta", "alpha"].includes(channel) ? channel : "stable";
+  channel = ['stable', 'beta', 'alpha'].includes(channel) ? channel : 'stable';
   const info: DefoldInfo = await (
     await fetch(`http://d.defold.com/${channel}/info.json`)
   ).json();
@@ -38,10 +38,10 @@ export default async function (
   // Pull down archive info
   const archive = {
     sha: info.sha1,
-    version: version === "latest" ? info.version : version,
+    version: version === 'latest' ? info.version : version,
   };
   const tag =
-    channel === "stable"
+    channel === 'stable'
       ? `${archive.version}`
       : `${archive.version}-${channel}`;
   const ref = await fetch(
@@ -60,34 +60,36 @@ export default async function (
     `http://d.defold.com/archive/${archive.sha}/engine/share/ref-doc.zip`
   );
   if (req.status != 200) {
-    throw new Error(`Unable to download archive for ${archive.version} (${archive.sha}): ${req.status}`);
+    throw new Error(
+      `Unable to download archive for ${archive.version} (${archive.sha}): ${req.status}`
+    );
   }
 
   const zip = new AdmZip(await req.buffer());
   const docs = zip
     .getEntries()
-    .filter((entry) => entry.name.endsWith("_doc.json"))
+    .filter((entry) => entry.name.endsWith('_doc.json'))
     .map(
-      (entry) => JSON.parse(entry.getData().toString("utf8")) as schema.IDocJson
+      (entry) => JSON.parse(entry.getData().toString('utf8')) as schema.IDocJson
     );
 
   // collect docs from project dependencies
   if (project) {
     const absPath = path.join(
       process.env.INIT_CWD ?? process.cwd(),
-      project ? project : "./app/game.project"
+      project ? project : './app/game.project'
     );
     if (
       await new Promise((r) =>
         fs.access(absPath, fs.constants.F_OK, (e) => r(!e))
       )
     ) {
-      const iniData = await fs.promises.readFile(absPath, "utf8");
+      const iniData = await fs.promises.readFile(absPath, 'utf8');
       const deps = iniData
-        .split("\n")
-        .filter((l) => l.startsWith("dependencies"))
+        .split('\n')
+        .filter((l) => l.startsWith('dependencies'))
         .map((dep) => {
-          return dep.split("=")[1].trim();
+          return dep.split('=')[1].trim();
         });
 
       docs.push(
@@ -98,9 +100,9 @@ export default async function (
               const zip = new AdmZip(await req.buffer());
               return zip
                 .getEntries()
-                .filter((entry) => entry.name.endsWith(".script_api"))
+                .filter((entry) => entry.name.endsWith('.script_api'))
                 .map<schema.IDocYaml>(
-                  (entry) => yaml.parse(entry.getData().toString("utf8"))[0]
+                  (entry) => yaml.parse(entry.getData().toString('utf8'))[0]
                 )
                 .map<schema.IDocJson>((api) => ({
                   info: {
@@ -112,10 +114,10 @@ export default async function (
                   elements: api.members.map<schema.IDocElement>((m) => ({
                     name: `${api.name}.${m.name}`,
                     type:
-                      m.type === "function"
+                      m.type === 'function'
                         ? schema.EDocElemType.Function
                         : schema.EDocElemType.Variable,
-                    brief: "",
+                    brief: '',
                     description: m.desc,
                     parameters: m.parameters
                       ? m.parameters.map((p) => ({
@@ -130,7 +132,7 @@ export default async function (
                       : [],
                     returnvalues: m.returns
                       ? m.returns.map((r) => ({
-                          name: r.name ?? "",
+                          name: r.name ?? '',
                           types: [
                             schema.typeMap?.[r.type] ??
                               schema.EDocParamType.Any,
@@ -165,7 +167,7 @@ export default async function (
   await fs.promises.writeFile(
     path.join(
       process.env.INIT_CWD ?? process.cwd(),
-      outFile ? outFile : "index.d.ts"
+      outFile ? outFile : 'index.d.ts'
     ),
     output
   );

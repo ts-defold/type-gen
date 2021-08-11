@@ -1,4 +1,4 @@
-import * as schema from "../types/schema";
+import * as schema from '../types/schema';
 
 export interface GeneratorInfo {
   channel: string;
@@ -7,29 +7,29 @@ export interface GeneratorInfo {
 }
 
 function comment(input: string) {
-  let out = "\t" + `/**` + "\n";
-  input.split("\n").forEach((line) => {
-    out += "\t" + `* ${line}` + "\n";
+  let out = '\t' + `/**` + '\n';
+  input.split('\n').forEach((line) => {
+    out += '\t' + `* ${line}` + '\n';
   });
-  out += "\t" + `*/` + "\n";
+  out += '\t' + `*/` + '\n';
 
   return out;
 }
 
-function docs(input: schema.IDocElement, TAB = "\t") {
+function docs(input: schema.IDocElement, TAB = '\t') {
   const desc = input.description || input.brief;
 
-  let out = TAB + `/**` + "\n";
-  desc.split("\n").forEach((line) => {
-    out += TAB + `* ${line}` + "\n";
+  let out = TAB + `/**` + '\n';
+  desc.split('\n').forEach((line) => {
+    out += TAB + `* ${line}` + '\n';
   });
   input.parameters.forEach((p) => {
-    out += TAB + `* @param ${p.name}  ${p.doc}` + "\n";
+    out += TAB + `* @param ${p.name}  ${p.doc}` + '\n';
   });
   input.returnvalues.forEach((p) => {
-    out += TAB + `* @return ${p.name}  ${p.doc}` + "\n";
+    out += TAB + `* @return ${p.name}  ${p.doc}` + '\n';
   });
-  out += TAB + `*/` + "\n";
+  out += TAB + `*/` + '\n';
 
   return out;
 }
@@ -53,7 +53,7 @@ function type(input: schema.EDocParamType[]): string {
     unique.includes(schema.EDocParamType.Any)
       ? [schema.EDocParamType.Any]
       : unique
-  ).join(" | ");
+  ).join(' | ');
 }
 
 function isOverloadedFunction(e: schema.IDocElement): {
@@ -94,8 +94,8 @@ function isOverloadedFunction(e: schema.IDocElement): {
 }
 
 function isReserved(name: string): { alt: string; name: string } | null {
-  const reserved = ["delete"];
-  return reserved.includes(name) ? { alt: name + "$", name } : null;
+  const reserved = ['delete'];
+  return reserved.includes(name) ? { alt: name + '$', name } : null;
 }
 
 function ensureUnique(
@@ -116,7 +116,7 @@ function ensureUnique(
 function hr(): string {
   return (
     `// =^..^=   =^..^=   =^..^=    =^..^=    =^..^=    =^..^=    =^..^= //` +
-    "\n\n"
+    '\n\n'
   );
 }
 
@@ -126,48 +126,48 @@ export function generate(
   types?: Array<schema.IDocTypes>,
   overrides?: Array<schema.IDocJson>
 ): string {
-  let output = "";
+  let output = '';
 
   // Header
-  output += `/** @noSelfInFile */` + "\n";
-  output += `/// <reference types="lua-types/5.1" />` + "\n";
-  output += "\n";
+  output += `/** @noSelfInFile */` + '\n';
+  output += `/// <reference types="lua-types/5.1" />` + '\n';
+  output += '\n';
   output +=
-    `// DEFOLD. ${info.channel} version ${info.tag} (${info.sha1})` + "\n";
+    `// DEFOLD. ${info.channel} version ${info.tag} (${info.sha1})` + '\n';
   output += hr();
 
   // Types
   if (types) {
     types.forEach((t) => {
       if (t.namespace)
-        output += "\n" + `declare namespace ${t.namespace} {` + "\n";
-      const tab = t.namespace ? "\t" : "";
-      const exp = t.namespace ? "export" : "declare";
+        output += '\n' + `declare namespace ${t.namespace} {` + '\n';
+      const tab = t.namespace ? '\t' : '';
+      const exp = t.namespace ? 'export' : 'declare';
 
       t.types.forEach((d) => {
         const unionOrIntersect = d.unions.length
-          ? `${d.unions.join(" | ")} `
+          ? `${d.unions.join(' | ')} `
           : d.intersections.length
-          ? `${d.intersections.join(" & ")} & `
-          : "";
+          ? `${d.intersections.join(' & ')} & `
+          : '';
 
-        output += "\n";
-        output += tab + `${exp} type ${d.name} = ${unionOrIntersect}{` + "\n";
+        output += '\n';
+        output += tab + `${exp} type ${d.name} = ${unionOrIntersect}{` + '\n';
 
         for (const k in d.definition) {
-          output += tab + "\t" + `${k}: ${d.definition[k]},` + "\n";
+          output += tab + '\t' + `${k}: ${d.definition[k]},` + '\n';
         }
 
-        output += tab + `}` + "\n";
+        output += tab + `}` + '\n';
       });
 
-      if (t.namespace) output += `}` + "\n";
+      if (t.namespace) output += `}` + '\n';
     });
   }
   output += hr();
 
   // Globals to the front
-  const globals = input.filter((i) => i.info.namespace === "");
+  const globals = input.filter((i) => i.info.namespace === '');
   globals.forEach((g) => input.splice(input.indexOf(g), 1));
   const sorted = globals.concat(input);
 
@@ -205,11 +205,11 @@ export function generate(
 
   // Modules
   modules.forEach((i) => {
-    const TAB = i.info.namespace ? "\t" : "";
-    const exp = i.info.namespace ? "export" : "declare";
-    output += "\n";
+    const TAB = i.info.namespace ? '\t' : '';
+    const exp = i.info.namespace ? 'export' : 'declare';
+    output += '\n';
     if (i.info.namespace)
-      output += `declare namespace ${i.info.namespace} {` + "\n";
+      output += `declare namespace ${i.info.namespace} {` + '\n';
 
     // Sort element output by name then type
     const elements = i.elements.sort((a, b) => {
@@ -221,45 +221,45 @@ export function generate(
     });
 
     elements.forEach((e) => {
-      const name = e.name.replace(`${i.info.namespace}.`, "");
-      output += "\n";
+      const name = e.name.replace(`${i.info.namespace}.`, '');
+      output += '\n';
 
       switch (e.type) {
         case schema.EDocElemType.Variable:
           {
             output += comment(e.brief);
             output +=
-              TAB + `${exp} let ${name}: ${schema.EDocParamType.Any}` + "\n";
+              TAB + `${exp} let ${name}: ${schema.EDocParamType.Any}` + '\n';
           }
           break;
 
         case schema.EDocElemType.Message:
           {
             output += comment(e.description);
-            output += TAB + `${exp} type ${name} = "${name}"` + "\n";
+            output += TAB + `${exp} type ${name} = "${name}"` + '\n';
           }
           break;
         case schema.EDocElemType.Property:
           {
             output += comment(e.description);
             output +=
-              TAB + `${exp} let ${name}: ${schema.EDocParamType.Any}` + "\n";
+              TAB + `${exp} let ${name}: ${schema.EDocParamType.Any}` + '\n';
           }
           break;
 
         case schema.EDocElemType.Function:
           {
             const scriptFunctions = [
-              "final",
-              "init",
-              "on_input",
-              "on_message",
-              "on_reload",
-              "update",
+              'final',
+              'init',
+              'on_input',
+              'on_message',
+              'on_reload',
+              'update',
             ];
             const reserved = isReserved(name);
             const funcName = reserved ? reserved.alt : name;
-            const funcExp = reserved ? "" : exp;
+            const funcExp = reserved ? '' : exp;
             if (
               i.info.group == schema.EDocGroup.System &&
               scriptFunctions.includes(funcName)
@@ -271,12 +271,12 @@ export function generate(
               if (overload && e.returnvalues.length) {
                 e.returnvalues[0].types.forEach((ret, i) => {
                   const set = new Map<string, number>();
-                  let params: Array<string> = [];
+                  const params: Array<string> = [];
                   e.parameters.forEach((p, j) => {
                     const uniqueParam = ensureUnique(set, p);
                     params.push(
                       `${uniqueParam.name}${
-                        uniqueParam.optional ? "?" : ""
+                        uniqueParam.optional ? '?' : ''
                       }: ${type(
                         j < start ? uniqueParam.types : [uniqueParam.types[i]]
                       )}`
@@ -286,27 +286,27 @@ export function generate(
                   output +=
                     TAB +
                     `${funcExp} function ${funcName}(${params.join(
-                      ", "
-                    )}): ${type([ret])}${optional ? " | undefined" : ""}` +
-                    "\n";
+                      ', '
+                    )}): ${type([ret])}${optional ? ' | undefined' : ''}` +
+                    '\n';
                   if (reserved)
                     output +=
-                      "\t" +
+                      '\t' +
                       `export { ${reserved.alt} as ${reserved.name} }` +
-                      "\n";
+                      '\n';
                 });
               } else {
                 const set = new Map<string, number>();
                 const params = e.parameters
                   .map((p) => ensureUnique(set, p))
                   .map(
-                    (p) => `${p.name}${p.optional ? "?" : ""}: ${type(p.types)}`
+                    (p) => `${p.name}${p.optional ? '?' : ''}: ${type(p.types)}`
                   )
-                  .join(", ");
+                  .join(', ');
                 const retValues =
                   e.returnvalues.length > 0
                     ? e.returnvalues[0].types
-                    : ["Void" as schema.EDocParamType]; // need a string of the key, to match parser
+                    : ['Void' as schema.EDocParamType]; // need a string of the key, to match parser
                 const retOptional =
                   e.returnvalues.length > 0
                     ? e.returnvalues[0].optional
@@ -315,13 +315,13 @@ export function generate(
                   TAB +
                   `${funcExp} function ${funcName}(${params}): ${type(
                     retValues
-                  )}${retOptional ? " | undefined" : ""}` +
-                  "\n";
+                  )}${retOptional ? ' | undefined' : ''}` +
+                  '\n';
                 if (reserved)
                   output +=
-                    "\t" +
+                    '\t' +
                     `export { ${reserved.alt} as ${reserved.name} }` +
-                    "\n";
+                    '\n';
               }
             }
           }
@@ -329,8 +329,8 @@ export function generate(
       }
     });
 
-    output += "\n";
-    if (i.info.namespace) output += `}` + "\n";
+    output += '\n';
+    if (i.info.namespace) output += `}` + '\n';
     output += hr();
   });
 

@@ -1,4 +1,4 @@
-import { IDocJson } from "./schema";
+import { IDocJson } from './schema';
 
 const overrides: Array<IDocJson> = [];
 

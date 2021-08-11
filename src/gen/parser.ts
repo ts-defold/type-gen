@@ -1,4 +1,4 @@
-import * as schema from "../types/schema";
+import * as schema from '../types/schema';
 
 export interface ParserOpts {
   log: unknown;
@@ -6,23 +6,23 @@ export interface ParserOpts {
 
 function parseHtml(input: string, isParam?: boolean): string {
   const icons: Record<string, string> = {
-    attention: "⚠",
-    html5: "🌎",
-    android: "🤖",
-    ios: "📱",
-    macos: "🍎",
-    linux: "🐧",
+    attention: '⚠',
+    html5: '🌎',
+    android: '🤖',
+    ios: '📱',
+    macos: '🍎',
+    linux: '🐧',
   };
   const icon = /.*<span class="icon-(.*)">.*<\/span>/.exec(input)?.[1];
 
   return input
-    .replace(/\\n<ul>/g, "")
-    .replace(/.*<li>(.*)<\/li>/g, "- $1")
-    .replace(/<\/?em>/g, "*")
-    .replace(/<\/?code>/g, "`")
-    .replace(/.*<span class="type">(.+)<\/span>(\s*)/g, isParam ? "" : "$1")
-    .replace(/.*<span class="icon-(.*)">.*<\/span>/g, icon ? icons[icon] : "")
-    .replace(/<.*?>/g, "");
+    .replace(/\\n<ul>/g, '')
+    .replace(/.*<li>(.*)<\/li>/g, '- $1')
+    .replace(/<\/?em>/g, '*')
+    .replace(/<\/?code>/g, '`')
+    .replace(/.*<span class="type">(.+)<\/span>(\s*)/g, isParam ? '' : '$1')
+    .replace(/.*<span class="icon-(.*)">.*<\/span>/g, icon ? icons[icon] : '')
+    .replace(/<.*?>/g, '');
 }
 
 function parseType(
@@ -35,8 +35,8 @@ function parseType(
   if (type) {
     const providedTypes = type.map((t) => {
       const key = typeMap[t];
-      return schema.reverseTypeMap[key ? key : ""]
-        ? (schema.reverseTypeMap[key ? key : ""] as schema.EDocParamType)
+      return schema.reverseTypeMap[key ? key : '']
+        ? (schema.reverseTypeMap[key ? key : ''] as schema.EDocParamType)
         : schema.EDocParamType.Unknown;
     });
     types.push(...providedTypes);
@@ -44,12 +44,12 @@ function parseType(
     const result = /.*<span class="type">(.+)<\/span>/.exec(doc);
     if (result && result.length > 1) {
       const inferredTypes = result[1]
-        .split("|")
+        .split('|')
         .map((t) => t.trim())
         .map((t) => {
           const key = typeMap[t];
-          return schema.reverseTypeMap[key ? key : ""]
-            ? (schema.reverseTypeMap[key ? key : ""] as schema.EDocParamType)
+          return schema.reverseTypeMap[key ? key : '']
+            ? (schema.reverseTypeMap[key ? key : ''] as schema.EDocParamType)
             : schema.EDocParamType.Unknown;
         });
       types.push(...inferredTypes);
@@ -63,7 +63,7 @@ function parseName(input: string): { name: string; optional: boolean } {
   const maybeOptional = /\[(.+)\]/.exec(input);
   const optional = maybeOptional && maybeOptional?.length > 1 ? true : false;
   const rawName = optional && maybeOptional ? maybeOptional[1] : input;
-  const name = rawName.replace(/^[^a-zA-Z_$]|[^0-9a-zA-Z_$]/g, "_");
+  const name = rawName.replace(/^[^a-zA-Z_$]|[^0-9a-zA-Z_$]/g, '_');
 
   return { name, optional };
 }
@@ -136,7 +136,7 @@ export function parse(
 
     const info: schema.IDocInfo = {
       group: doc.info.group,
-      namespace: inNamespace(doc) ? doc.info.namespace : "",
+      namespace: inNamespace(doc) ? doc.info.namespace : '',
       description: parseHtml(doc.info.description),
     };
 
