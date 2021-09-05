@@ -34,7 +34,7 @@ function docs(input: schema.IDocElement, TAB = '\t') {
   return out;
 }
 
-function type(input: schema.EDocParamType[]): string {
+function type(input: schema.EDocParamType[], isReturnTypes = false): string {
   const types = input.map((t) => {
     let type = Object.values(schema.EDocParamType)[
       Object.keys(schema.EDocParamType).indexOf(t)
@@ -46,6 +46,11 @@ function type(input: schema.EDocParamType[]): string {
 
     return type;
   });
+
+  // Is we are handling return types we may need to emit a LuaMultiReturn type
+  if (isReturnTypes && types.length > 1) {
+    return `LuaMultiReturn<[${types.join(', ')}]>`;
+  }
 
   // Unsure the parameter names are unique (no dupes), and if a single param is any, then the union is unnecessary
   const unique = [...new Set(types)];
@@ -131,6 +136,8 @@ export function generate(
   // Header
   output += `/** @noSelfInFile */` + '\n';
   output += `/// <reference types="lua-types/5.1" />` + '\n';
+  output +=
+    `/// <reference types="typescript-to-lua/language-extensions" />` + '\n';
   output += '\n';
   output +=
     `// DEFOLD. ${info.channel} version ${info.tag} (${info.sha1})` + '\n';
@@ -305,7 +312,7 @@ export function generate(
                   .join(', ');
                 const retValues =
                   e.returnvalues.length > 0
-                    ? e.returnvalues[0].types
+                    ? e.returnvalues.map((r) => r.types).flat()
                     : ['Void' as schema.EDocParamType]; // need a string of the key, to match parser
                 const retOptional =
                   e.returnvalues.length > 0
@@ -314,7 +321,8 @@ export function generate(
                 output +=
                   TAB +
                   `${funcExp} function ${funcName}(${params}): ${type(
-                    retValues
+                    retValues,
+                    true
                   )}${retOptional ? ' | undefined' : ''}` +
                   '\n';
                 if (reserved)
