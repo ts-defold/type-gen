@@ -1,4 +1,4 @@
-import * as schema from "../types/schema";
+import * as schema from '../types/schema';
 export interface ParserOpts {
     log: unknown;
 }
