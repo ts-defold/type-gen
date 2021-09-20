@@ -229,6 +229,9 @@ export function generate(
 
     elements.forEach((e) => {
       const name = e.name.replace(`${i.info.namespace}.`, '');
+      // TODO: Nested namespaces. Collect in parser?
+      if (name.includes('.') || name.includes(':')) return;
+
       output += '\n';
 
       switch (e.type) {

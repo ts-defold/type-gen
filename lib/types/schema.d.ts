@@ -2,7 +2,8 @@ export declare enum EDocGroup {
     System = "SYSTEM",
     Script = "SCRIPT",
     Components = "COMPONENTS",
-    Extensions = "EXTENSIONS"
+    Extensions = "EXTENSIONS",
+    Lua = "LUA STANDARD LIBS"
 }
 export declare enum EDocElemType {
     Variable = "VARIABLE",
@@ -37,6 +38,11 @@ export declare const typeMap: Record<string, EDocParamType>;
 export declare const reverseTypeMap: {
     [k: string]: string;
 };
+export interface IDocGroupFilter {
+    group: EDocGroup;
+    include?: string[];
+    exclude?: string[];
+}
 export interface IDocParam {
     name: string;
     types: EDocParamType[];

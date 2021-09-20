@@ -83,27 +83,39 @@ function inNamespace(doc: schema.IDocJson): boolean {
 }
 
 const defaults = [
-  schema.EDocGroup.System,
-  schema.EDocGroup.Script,
-  schema.EDocGroup.Components,
-  schema.EDocGroup.Extensions,
+  { group: schema.EDocGroup.System },
+  { group: schema.EDocGroup.Script },
+  { group: schema.EDocGroup.Components },
+  { group: schema.EDocGroup.Extensions },
+  { group: schema.EDocGroup.Lua, includes: ['socket'] },
 ];
 export function parse(
   input: Array<schema.IDocJson>,
-  groups: Array<schema.EDocGroup> = defaults,
+  groups: Array<schema.IDocGroupFilter> = defaults,
   typeMap?: Record<string, schema.EDocParamType>
 ): Array<schema.IDocJson> {
   const userTypeMap = Object.assign(schema.typeMap, typeMap || {});
   const alphabetical = input
     .slice()
     .sort((a, b) => a.info.namespace.localeCompare(b.info.namespace));
-  const filtered = alphabetical.filter((doc) =>
-    groups.includes(doc.info.group)
-  );
+  const filtered = alphabetical.filter((doc) => {
+    const group = groups.find((g) => g.group == doc.info.group);
+    if (group) {
+      if (group.include) {
+        return group.include.includes(doc.info.namespace);
+      } else if (group.exclude) {
+        return !group.exclude.includes(doc.info.namespace);
+      }
+      return true;
+    }
+    return false;
+  });
   const grouped = filtered
     .slice()
     .sort(
-      (a, b) => groups.indexOf(a.info.group) - groups.indexOf(b.info.group)
+      (a, b) =>
+        groups.findIndex((g) => g.group === a.info.group) -
+        groups.findIndex((g) => g.group === b.info.group)
     );
 
   return grouped.map((doc) => {

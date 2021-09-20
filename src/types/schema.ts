@@ -3,6 +3,7 @@ export enum EDocGroup {
   Script = 'SCRIPT',
   Components = 'COMPONENTS',
   Extensions = 'EXTENSIONS',
+  Lua = 'LUA STANDARD LIBS',
 }
 
 export enum EDocElemType {
@@ -68,6 +69,12 @@ export const typeMap: Record<string, EDocParamType> = {
 export const reverseTypeMap = Object.fromEntries(
   Object.entries(EDocParamType).map(([key, value]) => [value, key])
 );
+
+export interface IDocGroupFilter {
+  group: EDocGroup;
+  include?: string[];
+  exclude?: string[];
+}
 
 export interface IDocParam {
   name: string;

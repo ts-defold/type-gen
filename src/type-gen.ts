@@ -152,10 +152,11 @@ export default async function (
 
   // Parse and Generate
   const parsedDocs = parse(docs, [
-    schema.EDocGroup.System,
-    schema.EDocGroup.Script,
-    schema.EDocGroup.Components,
-    schema.EDocGroup.Extensions,
+    { group: schema.EDocGroup.Lua, include: ['socket'] },
+    { group: schema.EDocGroup.System },
+    { group: schema.EDocGroup.Script },
+    { group: schema.EDocGroup.Components },
+    { group: schema.EDocGroup.Extensions },
   ]);
   const output = generate(
     parsedDocs,
