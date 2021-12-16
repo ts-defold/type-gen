@@ -59,13 +59,17 @@ function parseType(
   return types;
 }
 
-function parseName(input: string): { name: string; optional: boolean } {
+function parseName(
+  input: string,
+  description: string
+): { name: string; optional: boolean } {
   const maybeOptional = /\[(.+)\]/.exec(input);
   const optional = maybeOptional && maybeOptional?.length > 1 ? true : false;
   const rawName = optional && maybeOptional ? maybeOptional[1] : input;
   const name = rawName.replace(/^[^a-zA-Z_$]|[^0-9a-zA-Z_$]/g, '_');
-
-  return { name, optional };
+  const altOptional = description.indexOf('optional') > -1;
+  if (name == 'options') console.log(altOptional, description);
+  return { name, optional: optional || altOptional };
 }
 
 function inNamespace(doc: schema.IDocJson): boolean {
@@ -126,7 +130,7 @@ export function parse(
         brief: parseHtml(el.brief),
         description: parseHtml(el.description),
         parameters: el.parameters.map((p) => {
-          const ext = parseName(p.name);
+          const ext = parseName(p.name, p.doc);
           return {
             name: ext.name,
             types: parseType(p.types, p.doc, userTypeMap),
@@ -135,7 +139,7 @@ export function parse(
           };
         }),
         returnvalues: el.returnvalues.map((r) => {
-          const ext = parseName(r.name);
+          const ext = parseName(r.name, '');
           return {
             name: ext.name,
             types: parseType(r.types, r.doc, userTypeMap),
