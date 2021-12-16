@@ -68,7 +68,6 @@ function parseName(
   const rawName = optional && maybeOptional ? maybeOptional[1] : input;
   const name = rawName.replace(/^[^a-zA-Z_$]|[^0-9a-zA-Z_$]/g, '_');
   const altOptional = description.indexOf('optional') > -1;
-  if (name == 'options') console.log(altOptional, description);
   return { name, optional: optional || altOptional };
 }
 
