@@ -137,7 +137,7 @@ export function generate(
   output += `/** @noSelfInFile */` + '\n';
   output += `/// <reference types="lua-types/5.1" />` + '\n';
   output +=
-    `/// <reference types="typescript-to-lua/language-extensions" />` + '\n';
+    `/// <reference types="@typescript-to-lua/language-extensions" />` + '\n';
   output += '\n';
   output +=
     `// DEFOLD. ${info.channel} version ${info.tag} (${info.sha1})` + '\n';
@@ -236,7 +236,7 @@ export function generate(
 
       switch (e.type) {
         case schema.EDocElemType.Variable:
-          {
+          if (name !== 'null') {
             output += comment(e.brief);
             output +=
               TAB + `${exp} let ${name}: ${schema.EDocParamType.Any}` + '\n';
