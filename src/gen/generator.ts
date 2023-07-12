@@ -99,7 +99,7 @@ function isOverloadedFunction(e: schema.IDocElement): {
 }
 
 function isReserved(name: string): { alt: string; name: string } | null {
-  const reserved = ['delete'];
+  const reserved = ['delete', 'null'];
   return reserved.includes(name) ? { alt: name + '$', name } : null;
 }
 
@@ -236,10 +236,19 @@ export function generate(
 
       switch (e.type) {
         case schema.EDocElemType.Variable:
-          if (name !== 'null') {
+          {
+            const reserved = isReserved(name);
+            const varName = reserved ? reserved.alt : name;
+            const varExp = reserved ? '' : exp;
             output += comment(e.brief);
             output +=
-              TAB + `${exp} let ${name}: ${schema.EDocParamType.Any}` + '\n';
+              TAB +
+              `${varExp} let ${varName}: ${schema.EDocParamType.Any}` +
+              '\n';
+            if (reserved) {
+              output +=
+                '\t' + `export { ${reserved.alt} as ${reserved.name} }` + '\n';
+            }
           }
           break;
 
@@ -251,9 +260,18 @@ export function generate(
           break;
         case schema.EDocElemType.Property:
           {
+            const reserved = isReserved(name);
+            const propName = reserved ? reserved.alt : name;
+            const propExp = reserved ? '' : exp;
             output += comment(e.description);
             output +=
-              TAB + `${exp} let ${name}: ${schema.EDocParamType.Any}` + '\n';
+              TAB +
+              `${propExp} let ${propName}: ${schema.EDocParamType.Any}` +
+              '\n';
+            if (reserved) {
+              output +=
+                '\t' + `export { ${reserved.alt} as ${reserved.name} }` + '\n';
+            }
           }
           break;
 
