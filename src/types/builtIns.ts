@@ -14,7 +14,11 @@ const types: Array<IDocTypes> = [
         name: 'url',
         unions: [],
         intersections: [],
-        definition: {},
+        definition: {
+          socket: EDocParamType.Hash,
+          path: EDocParamType.Hash,
+          fragment: EDocParamType.Hash,
+        },
       },
       {
         name: 'node',

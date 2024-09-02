@@ -66,7 +66,10 @@ function parseName(
   const maybeOptional = /\[(.+)\]/.exec(input);
   const optional = maybeOptional && maybeOptional?.length > 1 ? true : false;
   const rawName = optional && maybeOptional ? maybeOptional[1] : input;
-  const name = rawName.replace(/^[^a-zA-Z_$]|[^0-9a-zA-Z_$]/g, '_');
+  const name = rawName
+    .replace(/^[^a-zA-Z_$]|[^0-9a-zA-Z_$]/g, '_')
+    // Replace reserved keyword `var`
+    .replace('var', 'v');
   const altOptional = description.startsWith('optional');
   return { name, optional: optional || altOptional };
 }
