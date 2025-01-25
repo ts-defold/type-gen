@@ -97,7 +97,7 @@ const defaults = [
 ];
 // Groups are not guaranteed to be set in the Defold API
 // Instead, we include some APIs by checking their name
-const includedApisByName = ['liveupdate'];
+const includedApisByNamespace = ['liveupdate'];
 
 export function parse(
   input: Array<schema.IDocJson>,
@@ -109,7 +109,10 @@ export function parse(
     .slice()
     .sort((a, b) => a.info.namespace.localeCompare(b.info.namespace));
   const filtered = alphabetical.filter((doc) => {
-    if (doc.info.namespace && includedApisByName.includes(doc.info.namespace)) {
+    if (
+      doc.info.namespace &&
+      includedApisByNamespace.includes(doc.info.namespace)
+    ) {
       return true;
     }
     const group = groups.find((g) => g.group == doc.info.group);
