@@ -109,7 +109,7 @@ export function parse(
     .slice()
     .sort((a, b) => a.info.namespace.localeCompare(b.info.namespace));
   const filtered = alphabetical.filter((doc) => {
-    if (doc.info.name && includedApisByName.includes(doc.info.name)) {
+    if (doc.info.namespace && includedApisByName.includes(doc.info.namespace)) {
       return true;
     }
     const group = groups.find((g) => g.group == doc.info.group);
