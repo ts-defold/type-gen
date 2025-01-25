@@ -95,6 +95,10 @@ const defaults = [
   { group: schema.EDocGroup.Extensions },
   { group: schema.EDocGroup.Lua, includes: ['socket'] },
 ];
+// Groups are not guaranteed to be set in the Defold API
+// Instead, we include some APIs by checking their name
+const includedApisByName = ['liveupdate'];
+
 export function parse(
   input: Array<schema.IDocJson>,
   groups: Array<schema.IDocGroupFilter> = defaults,
@@ -105,6 +109,9 @@ export function parse(
     .slice()
     .sort((a, b) => a.info.namespace.localeCompare(b.info.namespace));
   const filtered = alphabetical.filter((doc) => {
+    if (doc.info.name && includedApisByName.includes(doc.info.name)) {
+      return true;
+    }
     const group = groups.find((g) => g.group == doc.info.group);
     if (group) {
       if (group.include) {
